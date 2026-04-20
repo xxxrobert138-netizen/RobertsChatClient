@@ -11,9 +11,12 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import org.jetbrains.annotations.NotNull;
@@ -63,6 +66,15 @@ public class MainActivity extends AppCompatActivity {
             public void onMessage(@NotNull WebSocket webSocket, @NotNull String text) {
                 runOnUiThread(() -> {
                     messages.add(text);
+                    updateListView();
+                });
+            }
+
+            @Override
+            public void onFailure(@NonNull WebSocket webSocket, @NonNull Throwable t, @Nullable Response response) {
+                runOnUiThread(() -> {
+                    messages.clear();
+                    messages.add("не удалось подключиться");
                     updateListView();
                 });
             }
