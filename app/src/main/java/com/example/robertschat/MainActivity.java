@@ -1,5 +1,6 @@
 package com.example.robertschat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +15,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
+import com.example.robertschat.backgroundWork.BackgroundWorker;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -26,6 +33,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+//    добавить предложения об разрешении на уведомление
     private EditText editText;
     private WebSocket webSocket;
     private OkHttpClient client;
@@ -54,6 +62,12 @@ public class MainActivity extends AppCompatActivity {
         editText = findViewById(R.id.editTextView);
         client = new OkHttpClient();
         startWebSocket();
+        startBackgroundWork();
+    }
+
+    private void startBackgroundWork() {
+        OneTimeWorkRequest oneTimeWorkRequest = new OneTimeWorkRequest.Builder(BackgroundWorker.class).build();
+        WorkManager.getInstance(this).enqueue(oneTimeWorkRequest);
     }
 
     private void startWebSocket() {
@@ -79,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    private void askForPermissionNotification() {
+
     }
 
     public void onPressButtonSend(View view) {
